@@ -1,0 +1,36 @@
+# Environnement virtuel Python
+venv/
+env/
+ENV/
+
+# Base de données SQLite (ne pas committer les données locales)
+instance/
+*.db
+
+# Caches Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Fichiers de configuration sensibles
+.env
+.env.*
+!.env.example
+*.log
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+*.tmp
+*.bak

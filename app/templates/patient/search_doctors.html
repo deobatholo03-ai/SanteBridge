@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Trouver un médecin{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 900px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-user-doctor" style="color: var(--primary);"></i> Médecins disponibles</h3>
+    </div>
+    
+    {% if doctors %}
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% for doctor in doctors %}
+        <div class="doctor-profile-card" style="display: flex; gap: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); transition: var(--transition);">
+            
+            <!-- Photo et Statut -->
+            <div style="position: relative; flex-shrink: 0;">
+                <img src="{{ doctor.photo_url or 'https://ui-avatars.com/api/?name=' + doctor.name }}" 
+                     alt="{{ doctor.name }}" 
+                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: var(--shadow-md);">
+                
+                <!-- Indicateur En Ligne -->
+                {% if doctor.is_online %}
+                <span style="position: absolute; bottom: 5px; right: 5px; width: 16px; height: 16px; background: var(--success); border: 3px solid white; border-radius: 50%; box-shadow: 0 0 0 2px var(--success-soft);" title="En ligne"></span>
+                {% else %}
+                <span style="position: absolute; bottom: 5px; right: 5px; width: 16px; height: 16px; background: var(--text-tertiary); border: 3px solid white; border-radius: 50%;" title="Hors ligne"></span>
+                {% endif %}
+            </div>
+
+            <!-- Informations -->
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 style="margin: 0 0 0.25rem 0; font-size: 1.25rem;">{{ doctor.name }}</h3>
+                        <p style="margin: 0 0 0.5rem 0; color: var(--primary); font-weight: 600; font-size: 1rem;">
+                            <i class="fa-solid fa-stethoscope"></i> {{ doctor.specialty or 'Médecin' }}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}" class="btn" style="width: auto; padding: 0.75rem 1.5rem; white-space: nowrap;">
+                        Prendre RDV
+                    </a>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <span><i class="fa-solid fa-hospital" style="color: var(--text-tertiary); width: 20px;"></i> {{ doctor.workplace or 'Non spécifié' }}</span>
+                    <span><i class="fa-solid fa-briefcase" style="color: var(--text-tertiary); width: 20px;"></i> {{ doctor.experience_years or '0' }} ans d'expérience</span>
+                    {% if doctor.is_online %}
+                    <span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 0.6rem; vertical-align: middle;"></i> Répond sous 15 min</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-user-doctor"></i>
+        <p>Aucun médecin disponible pour le moment.</p>
+    </div>
+    {% endif %}
+    
+    <p style="margin-top: 1.5rem; text-align: center;">
+        <a href="{{ url_for('patient.dashboard') }}" class="link">← Retour au tableau de bord</a>
+    </p>
+</div>
+{% endblock %}

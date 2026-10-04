@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Ordonnance #{{ rx.qr_code }}{% endblock %}
+
+{% block content %}
+<div class="card prescription-paper" style="max-width: 800px; margin: 0 auto; border: 1px solid #ddd; box-shadow: var(--shadow-xl);">
+    
+    <!-- En-tête de l'ordonnance -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--primary); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary); margin: 0;"><i class="fa-solid fa-heart-pulse"></i> SanteBridge</h2>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0; font-size: 0.9rem;">Plateforme de Santé Numérique Intégrée</p>
+        </div>
+        <div style="text-align: right;">
+            <h3 style="margin: 0;">Dr. {{ rx.doctor.name }}</h3>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Médecin Généraliste / Spécialiste</p>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: var(--text-tertiary);">ID: MED-{{ rx.doctor.id }}</p>
+        </div>
+    </div>
+
+    <!-- Info Patient & Date -->
+    <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+        <div>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600;">Patient</p>
+            <p style="margin: 0.25rem 0 0 0; font-size: 1.1rem; font-weight: 600;">{{ rx.patient.name }}</p>
+        </div>
+        <div style="text-align: right;">
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600;">Date</p>
+            <p style="margin: 0.25rem 0 0 0; font-size: 1.1rem; font-weight: 600;">{{ rx.created_at.strftime('%d/%m/%Y') }}</p>
+        </div>
+    </div>
+
+    <!-- Corps de l'ordonnance -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary); margin-bottom: 2rem;">
+        <h4 style="margin-top: 0; color: var(--text-primary);">Prescription médicale :</h4>
+        <pre style="font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; margin: 0;">{{ rx.medications }}</pre>
+        
+        {% if rx.notes %}
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);"><strong>Recommandations :</strong> {{ rx.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Pied de page avec QR Code -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3rem;">
+        <div>
+            <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 2rem;">Signature numérique certifiée par SanteBridge.</p>
+            <div style="font-family: 'Brush Script MT', cursive; font-size: 1.5rem; color: var(--primary);">
+                Dr. {{ rx.doctor.name }}
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code Vérification" style="width: 100px; height: 100px; border: 1px solid #ddd; padding: 5px; background: white; border-radius: 8px;">
+            <p style="font-size: 0.7rem; color: var(--text-tertiary); margin-top: 0.5rem;">ID: {{ rx.qr_code }}</p>
+            <p style="font-size: 0.7rem; color: var(--text-tertiary);">Scannez pour vérifier</p>
+        </div>
+    </div>
+</div>
+
+<!-- Bouton d'impression (caché à l'impression) -->
+<div style="text-align: center; margin-top: 2rem;" class="no-print">
+    <button onclick="window.print()" class="btn btn-lg">
+        <i class="fa-solid fa-print"></i> Imprimer / Enregistrer en PDF
+    </button>
+    <a href="{{ url_for('doctor.dashboard') }}" class="btn btn-outline btn-lg" style="margin-left: 1rem;">
+        <i class="fa-solid fa-arrow-left"></i> Retour au planning
+    </a>
+</div>
+
+<style>
+    /* CSS spécifique pour l'impression PDF */
+    @media print {
+        .navbar, .no-print, footer, .alert { display: none !important; }
+        body { background: white; }
+        .prescription-paper { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0 !important; }
+        .container { max-width: 100% !important; padding: 0 !important; }
+    }
+</style>
+{% endblock %}

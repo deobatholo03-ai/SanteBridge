@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Vérification Ordonnance{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-shield-halved" style="color: var(--success);"></i> Résultat de la vérification</h3>
+    </div>
+
+    {% if rx %}
+        <!-- Ordonnance Valide -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-check" style="font-size: 2rem; color: var(--success);"></i>
+                <div>
+                    <h4 style="margin: 0; color: #166534;">Ordonnance Authentique</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: #15803d;">Code vérifié : {{ rx.qr_code }}</p>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #bbf7d0;">
+                <div>
+                    <p style="margin: 0; font-size: 0.8rem; color: #15803d; text-transform: uppercase;">Patient</p>
+                    <p style="margin: 0.25rem 0 0 0; font-weight: 600;">{{ rx.patient.name }}</p>
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 0.8rem; color: #15803d; text-transform: uppercase;">Prescrit par</p>
+                    <p style="margin: 0.25rem 0 0 0; font-weight: 600;">Dr. {{ rx.doctor.name }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+            <h4 style="margin-top: 0;">Médicaments à préparer :</h4>
+            <pre style="font-family: 'Inter', sans-serif; white-space: pre-wrap; font-size: 1rem; color: var(--text-primary);">{{ rx.medications }}</pre>
+            {% if rx.notes %}
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);"><strong>Notes :</strong> {{ rx.notes }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <form method="POST" action="{{ url_for('pharmacy.process', rx_id=rx.id) }}" style="display: flex; gap: 1rem;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            {% if rx.pharmacy_status == 'pending' %}
+                <button type="submit" name="action" value="prepare" class="btn" style="flex: 1; background: var(--primary);">
+                    <i class="fa-solid fa-box-open"></i> Marquer comme Préparée
+                </button>
+            {% elif rx.pharmacy_status == 'prepared' %}
+                <button type="submit" name="action" value="deliver" class="btn" style="flex: 1; background: var(--success);">
+                    <i class="fa-solid fa-truck-fast"></i> Confirmer la Livraison/Remise
+                </button>
+            {% else %}
+                <button class="btn" style="flex: 1; background: var(--text-tertiary); cursor: not-allowed;" disabled>
+                    <i class="fa-solid fa-check-double"></i> Déjà Livrée
+                </button>
+            {% endif %}
+            
+            <a href="{{ url_for('pharmacy.dashboard') }}" class="btn btn-outline" style="flex: 1;">Nouvelle vérification</a>
+        </form>
+
+    {% else %}
+        <!-- État initial ou non trouvé -->
+        <div style="text-align: center; padding: 3rem 1rem;">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; color: var(--text-tertiary); margin-bottom: 1rem;"></i>
+            <h4>En attente de scan</h4>
+            <p style="color: var(--text-secondary);">Utilisez le formulaire ci-dessus pour vérifier une ordonnance.</p>
+            <a href="{{ url_for('pharmacy.dashboard') }}" class="btn btn-outline mt-2">Retour au tableau de bord</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

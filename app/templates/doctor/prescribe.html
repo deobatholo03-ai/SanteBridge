@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Rédiger une ordonnance{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-file-prescription" style="color: var(--primary);"></i> Nouvelle Ordonnance</h3>
+    </div>
+    
+    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+        <p><strong>Patient :</strong> {{ appt.patient.name }}</p>
+        <p><strong>Date du RDV :</strong> {{ appt.date.strftime('%d/%m/%Y') }} à {{ appt.time_slot }}</p>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-group">
+            <label for="medications">Médicaments et Posologies</label>
+            <textarea id="medications" name="medications" rows="6" required placeholder="Ex:&#10;- Paracétamol 1000mg : 1 comprimé 3 fois par jour après les repas pendant 5 jours.&#10;- Amoxicilline 500mg : 1 comprimé matin et soir pendant 7 jours."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Notes ou recommandations supplémentaires (optionnel)</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Ex: Repos recommandé pendant 48h. Contrôle dans 1 semaine."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <a href="{{ url_for('doctor.dashboard') }}" class="btn btn-outline" style="flex: 1;">Annuler</a>
+            <button type="submit" class="btn" style="flex: 2;">
+                <i class="fa-solid fa-check"></i> Générer et Signer l'ordonnance
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

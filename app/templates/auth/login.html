@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Connexion - SanteBridge{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-card-premium">
+        
+        <!-- 🎨 Côté Gauche : Visuel & Marque -->
+        <div class="auth-visual">
+            <div class="visual-content">
+                <i class="fa-solid fa-shield-heart visual-icon"></i>
+                <h2>Votre santé,<br>simplifiée et sécurisée.</h2>
+                <p>Retrouvez vos rendez-vous, ordonnances et dossiers médicaux en un seul endroit, accessible 24h/24.</p>
+            </div>
+            <div class="visual-decoration"></div>
+        </div>
+
+        <!-- 📝 Côté Droit : Formulaire -->
+        <div class="auth-form-side">
+            <div class="auth-header">
+                <h3>Bon retour parmi nous 👋</h3>
+                <p>Entrez vos identifiants pour accéder à votre espace.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="premium-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" name="email" required placeholder="nom@exemple.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                </div>
+
+                <!-- Sélecteur de rôle pour la Phase de Démo -->
+                <div class="form-group">
+                    <label for="role">Accéder en tant que (Mode Démo)</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-user-tag"></i>
+                                        <div class="form-group">
+                    <label for="role">Rôle (Mode Démo)</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-user-tag"></i>
+                        <select id="role" name="role" class="premium-select">
+                            <option value="patient">👤 Patient</option>
+                            <option value="doctor">👨‍⚕️ Médecin</option>
+                            <option value="pharmacy">💊 Pharmacie</option>
+                            <option value="diagnostic">🏥 Centre Diagnostic</option>
+                        </select>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-block btn-lg mt-2">
+                    Se connecter <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Vous n'avez pas encore de compte ? <a href="{{ url_for('auth.register') }}" class="link-bold">Créer un compte gratuitement</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

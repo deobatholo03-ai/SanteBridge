@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Mon Ordonnance{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-file-prescription" style="color: var(--primary);"></i> Ordonnance du {{ rx.created_at.strftime('%d/%m/%Y') }}</h3>
+    </div>
+    
+    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+        <p><strong>Prescrit par :</strong> Dr. {{ rx.doctor.name }}</p>
+        <p><strong>Statut :</strong> <span class="badge badge-confirmed">Validée</span></p>
+    </div>
+
+    <div style="background: white; border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+        <h4 style="margin-top: 0;">Médicaments :</h4>
+        <pre style="font-family: 'Inter', sans-serif; white-space: pre-wrap; color: var(--text-primary);">{{ rx.medications }}</pre>
+        
+        {% if rx.notes %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);"><strong>Recommandations :</strong> {{ rx.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 1rem;">
+            <i class="fa-solid fa-qrcode"></i> Code de vérification pharmacie : <strong>{{ rx.qr_code }}</strong>
+        </p>
+        <a href="{{ url_for('patient.dashboard') }}" class="btn btn-outline">Retour au tableau de bord</a>
+    </div>
+</div>
+{% endblock %}

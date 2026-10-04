@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Espace Médecin - SanteBridge{% endblock %}
+
+{% block content %}
+<!-- 🎯 En-tête Médecin -->
+<div class="dashboard-hero doctor-hero">
+    <div class="hero-content">
+        <h1>Bonjour, Dr. {{ current_user.name }} 👨‍⚕️</h1>
+        <p>Voici le résumé de votre activité et vos prochaines consultations.</p>
+    </div>
+    <div class="hero-visual">
+        <i class="fa-solid fa-user-doctor"></i>
+    </div>
+</div>
+
+<!-- 📊 Statistiques Rapides -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>{{ appointments | selectattr('date', 'equalto', today_date) | list | length }}</h3>
+        <p>RDV Aujourd'hui</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ appointments | selectattr('status', 'equalto', 'pending') | list | length }}</h3>
+        <p>En attente de confirmation</p>
+    </div>
+    <div class="stat-card">
+        <h3>0</h3> <!-- Phase 2 : Messages non lus -->
+        <p>Messages patients</p>
+    </div>
+</div>
+
+<!-- 📅 Section Principale : Planning & Actions -->
+<div class="dashboard-split">
+    
+    <!-- Colonne Gauche : Timeline des RDV -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3><i class="fa-regular fa-calendar-days"></i> Planning des consultations</h3>
+            <span class="badge badge-confirmed">À jour</span>
+        </div>
+        
+        {% if appointments %}
+            <div class="timeline-wrapper">
+                {% for appt in appointments %}
+                <div class="timeline-item">
+                    <div class="time-slot">
+                        <span class="time">{{ appt.time_slot }}</span>
+                        <span class="date">{{ appt.date.strftime('%d/%m') }}</span>
+                    </div>
+                    
+                    <div class="timeline-content">
+                        <div class="patient-info">
+                            <h4>{{ appt.patient.name }}</h4>
+                            <p class="reason"><i class="fa-solid fa-stethoscope"></i> {{ appt.reason or 'Consultation de routine' }}</p>
+                        </div>
+                        
+                        <div class="timeline-actions">
+                            <span class="status-badge status-{{ appt.status }}">{{ appt.status }}</span>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-primary" title="Voir le dossier">
+                                    <i class="fa-solid fa-folder-open"></i>
+                    
+                                <a href="{{ url_for('doctor.prescribe', appointment_id=appt.id) }}" class="btn-action btn-success" title="Rédiger une ordonnance">
+                                    <i class="fa-solid fa-file-prescription"></i>
+                                </a>
+                               
+                            </div
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fa-regular fa-calendar-xmark"></i>
+                <p>Aucun rendez-vous prévu pour le moment.</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Votre planning est libre.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Colonne Droite : Actions Rapides & Rappels -->
+    <div class="panel panel-highlight-blue">
+        <div class="highlight-icon-blue">
+            <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h3>Actions Rapides</h3>
+        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Accédez directement à vos outils de travail.</p>
+        
+        <div class="quick-links">
+            <a href="#" class="quick-link-item">
+                <i class="fa-solid fa-file-medical"></i>
+                <span>Mes Ordonnances récentes</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a href="#" class="quick-link-item">
+                <i class="fa-solid fa-flask"></i>
+                <span>Demandes d'examens </span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a href="#" class="quick-link-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Gérer mes créneaux horaires</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.3);">
+            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; opacity: 0.9;">💡 Rappel système</h4>
+            <p style="font-size: 0.85rem; opacity: 0.8;">Pensez à valider les résultats d'examens en attente avant 18h.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

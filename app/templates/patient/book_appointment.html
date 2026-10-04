@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Prendre rendez-vous{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-regular fa-calendar-check" style="color: var(--primary);"></i> Prendre rendez-vous</h3>
+    </div>
+
+    <!-- Récapitulatif Profil Médecin (Rassurance) -->
+    <div style="display: flex; gap: 1rem; background: var(--bg-tertiary); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; align-items: center;">
+        <img src="{{ doctor.photo_url or 'https://ui-avatars.com/api/?name=' + doctor.name }}" 
+             alt="{{ doctor.name }}" 
+             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+        <div>
+            <h4 style="margin: 0 0 0.25rem 0;">{{ doctor.name }}</h4>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                {{ doctor.specialty }} &bull; {{ doctor.workplace }}
+            </p>
+            {% if doctor.is_online %}
+            <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> En ligne</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-group">
+            <label for="date">Date du rendez-vous</label>
+            <input type="date" id="date" name="date" required min="{{ today }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="time_slot">Créneau horaire</label>
+            <select id="time_slot" name="time_slot" required class="premium-select">
+                <option value="">Choisir un créneau</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="reason">Motif de consultation</label>
+            <textarea id="reason" name="reason" rows="3" placeholder="Décrivez brièvement vos symptômes ou la raison de votre visite..."></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-outline" style="flex: 1;">Annuler</a>
+            <button type="submit" class="btn" style="flex: 2;">Confirmer la réservation</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

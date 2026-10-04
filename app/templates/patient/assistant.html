@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Assistant · SanteBridge{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/assistant.css') }}">
+<section id="assistant-app" class="assistant-shell" data-message-url="{{ url_for('assistant.message') }}" data-reset-url="{{ url_for('assistant.reset') }}" data-csrf="{{ csrf_token() }}">
+  <aside class="assistant-aside">
+    <span class="eyebrow">SANTEBRIDGE · RDC</span>
+    <h1 data-i18n="title">Votre santé,<br>parlons-en.</h1>
+    <p data-i18n="intro">Un premier échange pour trouver le bon accompagnement.</p>
+    <nav aria-label="Patient">
+      <a href="{{ url_for('patient.search_doctors') }}" data-i18n="doctors">Trouver un médecin ↗</a>
+      <a href="{{ url_for('patient.my_appointments') }}" data-i18n="appointments">Mes rendez-vous ↗</a>
+      <a href="{{ url_for('patient.dashboard') }}" data-i18n="dashboard">Mon espace patient ↗</a>
+    </nav>
+    <div class="prototype-note" data-i18n="prototype">Version de test. L’orientation médicale et le lingala doivent être validés par des soignants avant une utilisation réelle.</div>
+  </aside>
+  <div class="conversation-panel">
+    <header class="conversation-header">
+      <div><strong data-i18n="assistant">Assistant SanteBridge</strong><small data-i18n="subtitle">Orientation · Médecins · Pharmacies</small></div>
+      <label><span class="sr-only" data-i18n="language">Langue</span><select id="language"><option value="fr">Français</option><option value="ln">Lingala</option></select></label>
+    </header>
+    <div class="safety-note" data-i18n="safety">En cas de danger immédiat, cherchez une aide médicale sur place sans attendre une réponse ici. Cet assistant ne pose pas de diagnostic.</div>
+    <div id="messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation"></div>
+    <div id="suggestions" class="suggestions">
+      <button type="button" data-prompt="doctor" data-i18n="suggestDoctor">Trouver un gynécologue</button>
+      <button type="button" data-prompt="pharmacy" data-i18n="suggestPharmacy">Contacter une pharmacie</button>
+      <button type="button" data-prompt="symptoms" data-i18n="suggestSymptoms">Parler de mes symptômes</button>
+    </div>
+    <form id="chat-form">
+      <label class="consent"><input type="checkbox" id="consent"><span data-i18n="consent">J’accepte l’envoi de cet échange à OpenAI pour obtenir une réponse. Je n’indique ni nom complet ni coordonnées. L’échange est conservé temporairement en mémoire sur ce serveur.</span></label>
+      <label class="sr-only" for="message" data-i18n="messageLabel">Votre message</label>
+      <div class="composer"><textarea id="message" maxlength="2000" rows="2" required placeholder="Comment puis-je vous aider ?"></textarea><button id="send" type="submit" data-i18n="send">Envoyer →</button></div>
+      <div class="conversation-bottom"><span id="status" role="status"></span><button id="reset" type="button" data-i18n="reset">Effacer l’échange</button></div>
+    </form>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/assistant.js') }}" defer></script>
+{% endblock %}

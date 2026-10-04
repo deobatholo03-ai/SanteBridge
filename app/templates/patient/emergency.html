@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Urgence Ambulance - SanteBridge{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-location-crosshairs" style="color: var(--danger);"></i> Recherche d'ambulance</h3>
+    </div>
+
+    <!-- État de chargement -->
+    <div id="loading-state" class="loading-geo">
+        <div class="spinner"></div>
+        <h4>Géolocalisation en cours...</h4>
+        <p>Nous identifions les ambulances disponibles autour de vous.</p>
+    </div>
+
+    <!-- État : Résultats -->
+    <div id="results-state" style="display: none;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.5rem;"></i>
+            <div>
+                <strong>Position détectée</strong>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);" id="user-location-text">Localisation actuelle</p>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: 1rem;">Ambulances disponibles à proximité :</h4>
+        <div id="ambulance-list">
+            <!-- Injecté par JavaScript -->
+        </div>
+    </div>
+
+    <!-- État : Erreur -->
+    <div id="error-state" style="display: none; text-align: center; padding: 2rem;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; color: var(--warning); margin-bottom: 1rem;"></i>
+        <h4>Impossible d'accéder à votre position</h4>
+        <p>Veuillez autoriser la géolocalisation ou réessayer.</p>
+        <button onclick="initiateGeoSearch()" class="btn btn-outline mt-2">Réessayer</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('patient.dashboard') }}" class="link">← Retour au tableau de bord</a>
+    </div>
+</div>
+
+<script>
+    // Simulation de la géolocalisation et des données
+    function initiateGeoSearch() {
+        document.getElementById('loading-state').style.display = 'block';
+        document.getElementById('results-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'none';
+
+        // Utilisation de l'API de géolocalisation du navigateur
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError, { timeout: 5000 });
+        } else {
+            showError({ code: 0 });
+        }
+    }
+
+    function showPosition(position) {
+        // En Phase 1, on simule une réponse du serveur basée sur la position
+        // Dans la Phase 2, on enverra ces coords via fetch('/api/find-ambulance')
+        
+        setTimeout(() => {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('results-state').style.display = 'block';
+            document.getElementById('user-location-text').innerText = `Lat: ${position.coords.latitude.toFixed(4)}, Lon: ${position.coords.longitude.toFixed(4)}`;
+            
+            // Données mockées (simulées) pour la démo
+            const ambulances = [
+                { id: 1, name: "Ambulance Croix-Rouge #04", distance: "1.2 km", eta: "4 min", status: "Disponible" },
+                { id: 2, name: "SAMU Mobile - Unité 12", distance: "2.5 km", eta: "8 min", status: "Disponible" },
+                { id: 3, name: "Clinique du Plateau - Ambulance", distance: "3.8 km", eta: "12 min", status: "En route vers un autre patient" }
+            ];
+
+            const listContainer = document.getElementById('ambulance-list');
+            listContainer.innerHTML = '';
+
+            ambulances.forEach(amb => {
+                const isAvailable = amb.status === "Disponible";
+                const borderColor = isAvailable ? 'var(--success)' : 'var(--warning)';
+                const btnState = isAvailable ? '' : 'disabled style="opacity:0.6; cursor:not-allowed;"';
+                const btnText = isAvailable ? 'Appeler maintenant' : 'Indisponible';
+
+                listContainer.innerHTML += `
+                    <div class="ambulance-card" style="border-left-color: ${borderColor};">
+                        <div class="ambulance-info">
+                            <h4>${amb.name}</h4>
+                            <p><i class="fa-solid fa-location-dot"></i> ${amb.distance} &bull; ${amb.status}</p>
+                        </div>
+                        <div class="eta-badge">
+                            ${amb.eta}
+                            <small>Temps d'arrivée</small>
+                        </div>
+                        <button class="btn btn-sm" style="margin-left: 1rem; background: ${borderColor}; color: white;" ${btnState} onclick="alert('🚑 Appel en cours vers ${amb.name}...')">
+                            ${btnText}
+                        </button>
+                    </div>
+                `;
+            });
+        }, 1500); // Simule 1.5s de "recherche réseau"
+    }
+
+    function showError(error) {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'block';
+    }
+
+    // Lancer la recherche au chargement de la page
+    window.onload = initiateGeoSearch;
+</script>
+{% endblock %}

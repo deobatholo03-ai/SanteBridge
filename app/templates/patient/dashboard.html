@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Espace Patient - SanteBridge{% endblock %}
+
+{% block content %}
+<p style="margin-bottom: 1rem"><a class="btn" href="{{ url_for('assistant.page') }}">Parler à l’assistant · Français / Lingala</a></p>
+<!-- 🚨 Bannière d'Urgence -->
+<div class="emergency-banner">
+    <div class="emergency-text">
+        <h3><i class="fa-solid fa-truck-medical"></i> Urgence Vitale ?</h3>
+        <p>Localisez et appelez l'ambulance la plus proche immédiatement.</p>
+    </div>
+    <a href="{{ url_for('patient.emergency') }}" class="btn-emergency">
+        <i class="fa-solid fa-phone-volume"></i> Commander une ambulance
+    </a>
+</div>
+<!-- 🎯 En-tête Personnalisé -->
+<div class="dashboard-hero">
+    <div class="hero-content">
+        <h1>Bonjour, {{ current_user.name }} 👋</h1>
+        <p>Votre santé est notre priorité. Que souhaitez-vous faire aujourd'hui ?</p>
+    </div>
+    <div class="hero-visual">
+        <i class="fa-solid fa-shield-heart"></i>
+    </div>
+</div>
+
+<!-- 🚀 Actions Rapides (Grille Premium) -->
+<div class="quick-actions-grid">
+    <a href="{{ url_for('patient.search_doctors') }}" class="action-card card-blue">
+        <div class="icon-box">
+            <i class="fa-solid fa-user-doctor"></i>
+        </div>
+        <div class="card-text">
+            <h3>Consulter</h3>
+            <p>Trouver un spécialiste</p>
+        </div>
+        <i class="fa-solid fa-arrow-right arrow-icon"></i>
+    </a>
+
+    <a href="{{ url_for('patient.my_appointments') }}" class="action-card card-green">
+        <div class="icon-box">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <div class="card-text">
+            <h3>Rendez-vous</h3>
+            <p>Gérer mes créneaux</p>
+        </div>
+        <i class="fa-solid fa-arrow-right arrow-icon"></i>
+    </a>
+
+    <a href="#" class="action-card card-purple">
+        <div class="icon-box">
+            <i class="fa-solid fa-file-medical"></i>
+        </div>
+        <div class="card-text">
+            <h3>Dossier Médical</h3>
+            <p>Historique & Résultats</p>
+        </div>
+        <i class="fa-solid fa-arrow-right arrow-icon"></i>
+    </a>
+
+    <a href="#" class="action-card card-orange">
+        <div class="icon-box">
+            <i class="fa-solid fa-pills"></i>
+        </div>
+        <div class="card-text">
+            <h3>Pharmacie</h3>
+            <p>Commander en ligne</p>
+        </div>
+        <i class="fa-solid fa-arrow-right arrow-icon"></i>
+    </a>
+</div>
+
+<!-- 📊 Section Principale : Suivi & Activité -->
+<div class="dashboard-split">
+    
+    <!-- Colonne Gauche : Prochains RDV -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3><i class="fa-regular fa-clock"></i> Prochains rendez-vous</h3>
+            <a href="{{ url_for('patient.my_appointments') }}" class="link-sm">Voir tout</a>
+        </div>
+        
+        {% if appointments %}
+            <div class="appointment-list">
+                {% for appt in appointments[:3] %} <!-- Affiche les 3 prochains max -->
+                <div class="appointment-item">
+                    <div class="date-badge">
+                        <span class="day">{{ appt.date.strftime('%d') }}</span>
+                        <span class="month">{{ appt.date.strftime('%b') }}</span>
+                    </div>
+                    <div class="appt-details">
+                        <h4>{{ appt.doctor.name }}</h4>
+                        <p><i class="fa-regular fa-clock"></i> {{ appt.time_slot }} &bull; {{ appt.reason or 'Consultation générale' }}</p>
+                    </div>
+                    <span class="status-badge status-{{ appt.status }}">
+                        {{ appt.status }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fa-regular fa-calendar-xmark"></i>
+                <p>Aucun rendez-vous prévu.</p>
+                <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-sm mt-2">Prendre un RDV</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Colonne Droite : Rappel Santé / Info -->
+    <div class="panel panel-highlight">
+        <div class="highlight-icon">
+            <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <h3>Conseil du jour</h3>
+        <p>Boire au moins 1,5L d'eau par jour et faire 30 minutes de marche améliore significativement votre santé cardiovasculaire.</p>
+        <div class="progress-bar-container">
+            <div class="progress-label">
+                <span>Objectif eau</span>
+                <span>1.2L / 1.5L</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 80%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

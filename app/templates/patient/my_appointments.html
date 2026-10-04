@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Mes rendez-vous{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>📅 Mes rendez-vous</h2>
+    
+    {% if appointments %}
+    <div style="display: grid; gap: 1rem; margin-top: 1.5rem;">
+        {% for appt in appointments %}
+        <div style="padding: 1.5rem; background: #f8fafc; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">{{ appt.doctor.name }}</h3>
+                <p style="color: #64748b; margin: 0;">{{ appt.date.strftime('%d/%m/%Y') }} à {{ appt.time_slot }}</p>
+                {% if appt.reason %}
+                <p style="color: #64748b; margin: 0.25rem 0 0 0; font-size: 0.875rem;">Motif : {{ appt.reason }}</p>
+                {% endif %}
+            </div>
+            <!-- Correction ici : utilisation des classes CSS au lieu du style inline -->
+            <span class="badge {% if appt.status == 'pending' %}badge-pending{% elif appt.status == 'confirmed' %}badge-confirmed{% else %}badge-cancelled{% endif %}">
+                {{ appt.status }}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color: #64748b; text-align: center; margin-top: 1.5rem;">Aucun rendez-vous pour le moment.</p>
+    {% endif %}
+    
+    <p style="margin-top: 1.5rem; text-align: center;">
+        <a href="{{ url_for('patient.dashboard') }}" class="link">← Retour au dashboard</a>
+    </p>
+</div>
+{% endblock %}

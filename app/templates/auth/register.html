@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Inscription{% endblock %}
+{% block content %}
+<div class="card">
+    <h2 class="text-center">📝 Inscription</h2>
+    
+    <form method="POST" action="{{ url_for('auth.register') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-group">
+            <label>Nom complet</label>
+            <input type="text" name="name" required placeholder="Jean Patient">
+        </div>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="nom@exemple.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" name="phone" placeholder="+225 07 07 07 07">
+        </div>
+        
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" name="password" required placeholder="Minimum 6 caractères" minlength="6">
+        </div>
+        
+        <div class="form-group">
+                            <div class="form-group">
+                    <label for="role">Je suis...</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-user-tag"></i>
+                        <select id="role" name="role" class="premium-select" required>
+                            <option value="patient">👤 Patient</option>
+                            <option value="doctor">👨‍⚕️ Médecin</option>
+                            <option value="pharmacy">💊 Pharmacie</option>
+                            <option value="diagnostic">🏥 Centre Diagnostic</option>
+                        </select>
+                    </div>
+                </div>
+        </div>
+        
+        <button type="submit" class="btn">Créer mon compte</button>
+    </form>
+    
+    <p class="text-center" style="margin-top: 1rem;">
+        Déjà un compte ? <a href="{{ url_for('auth.login') }}" class="link">Se connecter</a>
+    </p>
+</div>
+{% endblock %}

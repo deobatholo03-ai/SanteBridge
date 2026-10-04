@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Espace Pharmacie - SanteBridge{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+    <div class="hero-content">
+        <h1>Espace Pharmacie 💊</h1>
+        <p>Vérifiez les ordonnances numériques et gérez les préparations.</p>
+    </div>
+    <div class="hero-visual">
+        <i class="fa-solid fa-mortar-pestle"></i>
+    </div>
+</div>
+
+<div class="card" style="max-width: 800px; margin: -3rem auto 2rem auto; position: relative; z-index: 10;">
+    <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-qrcode"></i> Vérifier une ordonnance</h3>
+    <form method="POST" action="{{ url_for('pharmacy.verify') }}" style="display: flex; gap: 1rem;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="input-icon-wrapper" style="flex: 1;">
+            <i class="fa-solid fa-barcode"></i>
+            <input type="text" name="rx_code" required placeholder="Entrez ou scannez le code (ex: RX-A1B2C3D4)" style="text-transform: uppercase;">
+        </div>
+        <button type="submit" class="btn">Vérifier</button>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Activité récente</h3>
+    </div>
+    {% if prescriptions %}
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Code QR</th>
+                        <th>Patient</th>
+                        <th>Médecin</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rx in prescriptions %}
+                    <tr>
+                        <td><strong>{{ rx.qr_code }}</strong></td>
+                        <td>{{ rx.patient.name }}</td>
+                        <td>Dr. {{ rx.doctor.name }}</td>
+                        <td>{{ rx.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if rx.pharmacy_status == 'pending' %}
+                                <span class="badge badge-pending">En attente</span>
+                            {% elif rx.pharmacy_status == 'prepared' %}
+                                <span class="badge badge-confirmed">Préparée</span>
+                            {% else %}
+                                <span class="badge" style="background: #e0e7ff; color: #3730a3;">Livrée</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center" style="padding: 2rem; color: var(--text-secondary);">Aucune ordonnance récente.</p>
+    {% endif %}
+</div>
+{% endblock %}
